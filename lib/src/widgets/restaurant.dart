@@ -53,7 +53,7 @@ class RestaurantWidget extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0, top: 5.0),
                   child: Container(
-                    width: 60,
+                    width: 85,
                     decoration: BoxDecoration(
                       color: white,
                       borderRadius: BorderRadius.circular(5),
@@ -69,7 +69,10 @@ class RestaurantWidget extends StatelessWidget {
                             size: 20,
                           ),
                         ),
-                        Text(restaurant.rating.toString()),
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Text(restaurant.rating.toString()),
+                        ),
                       ],
                     ),
                   ),
