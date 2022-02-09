@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "642545995614",
+    "project_id": "click-to-eat-71a54",
+    "storage_bucket": "click-to-eat-71a54.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:642545995614:android:e254fdc5a973cd45ca89cf",
+        "android_client_info": {
+          "package_name": "com.example.click_to_eat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "642545995614-j3ir1s3p34tilak95pqi4nv1ddnrd48s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAFWjAaBDEYgkkb25OsAN5yxq1MQYAhBg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "642545995614-j3ir1s3p34tilak95pqi4nv1ddnrd48s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
