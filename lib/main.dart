@@ -1,5 +1,6 @@
 import 'package:click_to_eat/src/helpers/style.dart';
 import 'package:click_to_eat/src/providers/category.dart';
+import 'package:click_to_eat/src/providers/product.dart';
 import 'package:click_to_eat/src/providers/restaurant.dart';
 import 'package:click_to_eat/src/providers/user.dart';
 import 'package:click_to_eat/src/screens/home.dart';
@@ -18,6 +19,7 @@ void main() async {
       ChangeNotifierProvider.value(value: UserProvider.initialize()),
       ChangeNotifierProvider.value(value: CategoryProvider.initialize()),
       ChangeNotifierProvider.value(value: RestaurantProvider.initialize()),
+      ChangeNotifierProvider.value(value: ProductProvider.initialize()),
     ],
     child: MaterialApp(
       debugShowCheckedModeBanner: false,

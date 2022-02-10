@@ -11,17 +11,20 @@ class ShoppingBag extends StatefulWidget {
 }
 
 class _ShoppingBagState extends State<ShoppingBag> {
-  Product product = Product(
-      id: "1",
-      name: "Noodles",
-      image: "noodles.jpg",
-      rates: 100,
-      rating: 4.2,
-      price: 120,
-      restaurantId: "a",
-      restaurantName: "Food Junction",
-      category: "Fast Food",
-      featured: true);
+  ProductModel product = ProductModel(
+    id: "1",
+    name: "Noodles",
+    image: "noodles.jpg",
+    rates: 100,
+    rating: 4.2,
+    price: 120,
+    restaurantId: "a",
+    restaurantName: "Food Junction",
+    category: "Fast Food",
+    featured: true,
+    description:
+        "Noodles are a type of food made from unleavened dough which is rolled flat and cut, stretched or extruded, into long strips or strings. Noodles can be refrigerated for short-term storage or dried and stored for future use. Noodles are usually cooked in boiling water, sometimes with cooking oil or salt added.",
+  );
   @override
   Widget build(BuildContext context) {
     return Scaffold(

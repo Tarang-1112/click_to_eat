@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Product {
+class ProductModel {
   final String id;
   final String name;
   final String image;
-  final int rates;
-  final double rating;
-  final double price;
+  final num rates;
+  final num rating;
+  final num price;
   final String restaurantId;
   final String restaurantName;
   final String category;
   final bool featured;
+  final String description;
 
-  Product({
+  ProductModel({
     required this.id,
     required this.name,
     required this.image,
@@ -24,11 +25,12 @@ class Product {
     required this.restaurantName,
     required this.category,
     required this.featured,
+    required this.description,
   });
 
-  factory Product.fromSnapshot(
+  factory ProductModel.fromSnapshot(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
-    return Product(
+    return ProductModel(
       id: snapshot.data()!["id"] ?? "",
       name: snapshot.data()!["name"] ?? "",
       image: snapshot.data()!["image"] ?? "",
@@ -39,6 +41,7 @@ class Product {
       restaurantName: snapshot.data()!["restaurantName"] ?? "",
       category: snapshot.data()!["category"] ?? "",
       featured: snapshot.data()!["featured"] ?? false,
+      description: snapshot.data()!["description"] ?? "",
     );
   }
 }

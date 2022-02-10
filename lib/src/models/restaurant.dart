@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RestaurantModel {
-  final num id;
+  final String id;
   final String name;
   final num averagePrice;
   //static const USER_ID = "userId";

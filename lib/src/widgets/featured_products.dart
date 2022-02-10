@@ -1,80 +1,92 @@
 import 'package:click_to_eat/src/helpers/screen_navigation.dart';
 import 'package:click_to_eat/src/models/products.dart';
+import 'package:click_to_eat/src/providers/product.dart';
+import 'package:click_to_eat/src/providers/user.dart';
 import 'package:click_to_eat/src/screens/details.dart';
+import 'package:click_to_eat/src/widgets/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 import '../helpers/style.dart';
 import 'custom_text.dart';
 
-List<Product> productsList = [
-  Product(
-      id: "1",
-      name: "Noodles",
-      image: "noodles.jpg",
-      rates: 100,
-      rating: 4.2,
-      price: 120,
-      restaurantId: "a",
-      restaurantName: "Food Junction",
-      category: "Fast Food",
-      featured: true),
-  Product(
-      id: "2",
-      name: "Ceaser Salad",
-      image: "2.jpg",
-      rates: 100,
-      rating: 4.3,
-      price: 90,
-      restaurantId: "b",
-      restaurantName: "SubWay",
-      category: "Healthy Food",
-      featured: false),
-  Product(
-      id: "3",
-      name: "Gujarati Thali",
-      image: "3.jpg",
-      rates: 100,
-      rating: 4.5,
-      price: 200,
-      restaurantId: "c",
-      restaurantName: "Kansaar Restaurant",
-      category: "Thali",
-      featured: true),
-  Product(
-      id: "4",
-      name: "Fish Dish",
-      image: "4.jpg",
-      rates: 100,
-      rating: 4.22,
-      price: 200,
-      restaurantId: "d",
-      restaurantName: "Indian Restaurant",
-      category: "Sea Food",
-      featured: true),
-  Product(
-      id: "5",
-      name: "Burger",
-      image: "5.jpg",
-      rates: 100,
-      rating: 4.12,
-      price: 40,
-      restaurantId: "e",
-      restaurantName: "Food Junction",
-      category: "Fast Food",
-      featured: true),
-];
+// List<Product> productsList = [
+//   Product(
+//       id: "1",
+//       name: "Noodles",
+//       image: "noodles.jpg",
+//       rates: 100,
+//       rating: 4.2,
+//       price: 120,
+//       restaurantId: "a",
+//       restaurantName: "Food Junction",
+//       category: "Fast Food",
+//       featured: true),
+//   Product(
+//       id: "2",
+//       name: "Ceaser Salad",
+//       image: "2.jpg",
+//       rates: 100,
+//       rating: 4.3,
+//       price: 90,
+//       restaurantId: "b",
+//       restaurantName: "SubWay",
+//       category: "Healthy Food",
+//       featured: false),
+//   Product(
+//       id: "3",
+//       name: "Gujarati Thali",
+//       image: "3.jpg",
+//       rates: 100,
+//       rating: 4.5,
+//       price: 200,
+//       restaurantId: "c",
+//       restaurantName: "Kansaar Restaurant",
+//       category: "Thali",
+//       featured: true),
+//   Product(
+//       id: "4",
+//       name: "Fish Dish",
+//       image: "4.jpg",
+//       rates: 100,
+//       rating: 4.22,
+//       price: 200,
+//       restaurantId: "d",
+//       restaurantName: "Indian Restaurant",
+//       category: "Sea Food",
+//       featured: true),
+//   Product(
+//       id: "5",
+//       name: "Burger",
+//       image: "5.jpg",
+//       rates: 100,
+//       rating: 4.12,
+//       price: 40,
+//       restaurantId: "e",
+//       restaurantName: "Food Junction",
+//       category: "Fast Food",
+//       featured: true),
+// ];
 
-class Featured extends StatelessWidget {
+class Featured extends StatefulWidget {
   const Featured({Key? key}) : super(key: key);
 
   @override
+  State<Featured> createState() => _FeaturedState();
+}
+
+class _FeaturedState extends State<Featured> {
+  @override
   Widget build(BuildContext context) {
+    final productProvider = Provider.of<ProductProvider>(context);
+    final user = Provider.of<UserProvider>(context);
     return Container(
-      height: 240,
-      width: 200,
+      height: 220,
+      //width: 200,
       child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: productsList.length,
+          itemCount: productProvider.products.length,
           itemBuilder: (_, index) {
             return Padding(
               padding: const EdgeInsets.fromLTRB(12, 14, 16, 12),
@@ -83,11 +95,12 @@ class Featured extends StatelessWidget {
                   changeScreen(
                       _,
                       Details(
-                        product: productsList[index],
+                        product: productProvider.products[index],
                       ));
                 },
                 child: Container(
-                  height: 240,
+                  height: 320,
+                  width: 240,
                   decoration: BoxDecoration(
                     color: white,
                     boxShadow: [
@@ -100,18 +113,45 @@ class Featured extends StatelessWidget {
                   ),
                   child: Column(
                     children: <Widget>[
-                      Image.asset(
-                        "images/${productsList[index].image}",
-                        height: 140,
-                        //width: 140,
+                      // Positioned.fill(
+                      //   child: Align(
+                      //     alignment: Alignment.center,
+                      //     child: Container(
+                      //       height: 120,
+                      //       child: Loading(),
+                      //     ),
+                      //   ),
+                      // ),
+                      Stack(
+                        children: <Widget>[
+                          Positioned.fill(
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Container(
+                                height: 120,
+                                child: Loading(),
+                              ),
+                            ),
+                          ),
+                          FadeInImage.memoryNetwork(
+                            placeholder: kTransparentImage,
+                            image: productProvider.products[index].image,
+                            height: 130,
+                          ),
+                        ],
                       ),
+                      // Image.asset(
+                      //   "images/${productProvider.products[index].image}",
+                      //   height: 140,
+                      //   //width: 140,
+                      // ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: CustomText(
-                                text: "${productsList[index].name}",
+                                text: "${productProvider.products[index].name}",
                                 size: 16,
                                 colors: black,
                                 weight: FontWeight.normal),
@@ -132,7 +172,7 @@ class Featured extends StatelessWidget {
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: productsList[index].featured
+                                child: productProvider.products[index].featured
                                     ? Icon(
                                         Icons.favorite_sharp,
                                         size: 20,
@@ -156,7 +196,8 @@ class Featured extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsets.only(left: 8.0),
                                 child: CustomText(
-                                    text: "${productsList[index].rating}",
+                                    text:
+                                        "${productProvider.products[index].rating.toString()}",
                                     size: 14,
                                     colors: grey,
                                     weight: FontWeight.normal),
@@ -197,7 +238,8 @@ class Featured extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(right: 8.0),
                             child: CustomText(
-                                text: "\u{20B9}${productsList[index].price}",
+                                text:
+                                    "\u{20B9}${productProvider.products[index].price}",
                                 size: 16,
                                 colors: black,
                                 weight: FontWeight.bold),
@@ -213,3 +255,21 @@ class Featured extends StatelessWidget {
     );
   }
 }
+
+/*
+Positioned.fill(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        height: 120,
+                        child: Loading(),
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: FadeInImage.memoryNetwork(
+                        placeholder: kTransparentImage,
+                        image: restaurant.image),
+                  ),
+
+*/

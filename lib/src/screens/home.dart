@@ -1,10 +1,13 @@
 import 'package:click_to_eat/src/helpers/screen_navigation.dart';
 import 'package:click_to_eat/src/helpers/style.dart';
 import 'package:click_to_eat/src/providers/category.dart';
+import 'package:click_to_eat/src/providers/product.dart';
 import 'package:click_to_eat/src/providers/restaurant.dart';
 import 'package:click_to_eat/src/providers/user.dart';
 import 'package:click_to_eat/src/screens/bag.dart';
+import 'package:click_to_eat/src/screens/category.dart';
 import 'package:click_to_eat/src/screens/login.dart';
+import 'package:click_to_eat/src/screens/restaurant.dart';
 import 'package:click_to_eat/src/widgets/bottom_navigation_icons.dart';
 import 'package:click_to_eat/src/widgets/categories.dart';
 import 'package:click_to_eat/src/widgets/custom_text.dart';
@@ -28,6 +31,7 @@ class _HomeState extends State<Home> {
     final user = Provider.of<UserProvider>(context);
     final categoryProvider = Provider.of<CategoryProvider>(context);
     final restaurantProvider = Provider.of<RestaurantProvider>(context);
+    final productProvider = Provider.of<ProductProvider>(context);
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: black),
@@ -226,8 +230,20 @@ class _HomeState extends State<Home> {
                     scrollDirection: Axis.horizontal,
                     itemCount: categoryProvider.categories.length,
                     itemBuilder: (context, index) {
-                      return CategoryWidget(
-                        category: categoryProvider.categories[index],
+                      return GestureDetector(
+                        onTap: () async {
+                          await productProvider.loadProductsByCategory(
+                              categoryName:
+                                  categoryProvider.categories[index].name);
+                          changeScreen(
+                              context,
+                              CategoryScreen(
+                                  categoryModel:
+                                      categoryProvider.categories[index]));
+                        },
+                        child: CategoryWidget(
+                          category: categoryProvider.categories[index],
+                        ),
                       );
                     })),
 
@@ -275,7 +291,15 @@ class _HomeState extends State<Home> {
             Column(
               children: restaurantProvider.restaurants
                   .map((item) => GestureDetector(
-                        onTap: () {},
+                        onTap: () async {
+                          await productProvider.loadProductsByRestaurant(
+                              restaurantId: item.id);
+                          changeScreen(
+                              context,
+                              RestaurantScreen(
+                                restaurantModel: item,
+                              ));
+                        },
                         child: RestaurantWidget(
                           restaurant: item,
                         ),
