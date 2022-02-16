@@ -1,5 +1,6 @@
 import 'package:click_to_eat/src/helpers/screen_navigation.dart';
 import 'package:click_to_eat/src/helpers/style.dart';
+import 'package:click_to_eat/src/providers/app.dart';
 import 'package:click_to_eat/src/providers/category.dart';
 import 'package:click_to_eat/src/providers/product.dart';
 import 'package:click_to_eat/src/providers/restaurant.dart';
@@ -7,7 +8,9 @@ import 'package:click_to_eat/src/providers/user.dart';
 import 'package:click_to_eat/src/screens/bag.dart';
 import 'package:click_to_eat/src/screens/category.dart';
 import 'package:click_to_eat/src/screens/login.dart';
+import 'package:click_to_eat/src/screens/product_search.dart';
 import 'package:click_to_eat/src/screens/restaurant.dart';
+import 'package:click_to_eat/src/screens/restaurant_search.dart';
 import 'package:click_to_eat/src/widgets/bottom_navigation_icons.dart';
 import 'package:click_to_eat/src/widgets/categories.dart';
 import 'package:click_to_eat/src/widgets/custom_text.dart';
@@ -28,6 +31,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
+    final app = Provider.of<AppProvider>(context);
     final user = Provider.of<UserProvider>(context);
     final categoryProvider = Provider.of<CategoryProvider>(context);
     final restaurantProvider = Provider.of<RestaurantProvider>(context);
@@ -207,19 +211,65 @@ class _HomeState extends State<Home> {
                       color: red,
                     ),
                     title: TextField(
+                      textInputAction: TextInputAction.search,
+                      onSubmitted: (pattern) async {
+                        app.changeLoading();
+                        if (app.search == SearchBy.PRODUCTS) {
+                          await productProvider.searchProduct(
+                              productName: pattern);
+                          changeScreen(context, ProductSearchScreen());
+                        } else {
+                          await restaurantProvider.searchRaestro(
+                              restaurantName: pattern);
+                          changeScreen(context, RestaurantSearchScreen());
+                        }
+                        app.changeLoading();
+                      },
                       decoration: InputDecoration(
                         hintText: "Find Food and Restaurant",
                         border: InputBorder.none,
                       ),
                     ),
-                    trailing: Icon(
-                      Icons.filter_list,
-                      color: red,
-                    ),
                   ),
                 ),
               ),
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                CustomText(
+                  text: "Search By : ",
+                  size: 16,
+                  colors: grey,
+                  weight: FontWeight.w300,
+                ),
+                DropdownButton<String>(
+                  value: app.filterBy,
+                  style: TextStyle(
+                    color: primary,
+                    fontWeight: FontWeight.w300,
+                  ),
+                  icon: Icon(
+                    Icons.filter_list,
+                    color: purple,
+                  ),
+                  elevation: 0,
+                  onChanged: (value) {
+                    if (value == "Products") {
+                      app.changeSearchBy(newSearchBy: SearchBy.PRODUCTS);
+                    } else {
+                      app.changeSearchBy(newSearchBy: SearchBy.RESTAURANTS);
+                    }
+                  },
+                  items: <String>["Products", "Restaurants"]
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                        value: value, child: Text(value));
+                  }).toList(),
+                ),
+              ],
+            ),
+            Divider(),
             SizedBox(
               height: 5,
             ),

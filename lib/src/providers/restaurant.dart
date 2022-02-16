@@ -10,7 +10,7 @@ class RestaurantProvider with ChangeNotifier {
 
   RestaurantProvider.initialize() {
     _loadRestaurants();
-    searchRaestro(restaurantName: "K");
+    //searchRaestro(restaurantName: "K");
   }
 
   _loadRestaurants() async {

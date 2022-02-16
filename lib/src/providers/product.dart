@@ -11,7 +11,7 @@ class ProductProvider with ChangeNotifier {
 
   ProductProvider.initialize() {
     _loadProducts();
-    searchProduct(productName: "k");
+    // searchProduct(productName: "k");
   }
 
   _loadProducts() async {
