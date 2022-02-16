@@ -1,6 +1,9 @@
+import 'package:click_to_eat/src/helpers/screen_navigation.dart';
 import 'package:click_to_eat/src/helpers/style.dart';
 import 'package:click_to_eat/src/models/products.dart';
 import 'package:click_to_eat/src/providers/product.dart';
+import 'package:click_to_eat/src/providers/restaurant.dart';
+import 'package:click_to_eat/src/screens/restaurant.dart';
 import 'package:click_to_eat/src/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:click_to_eat/src/widgets/custom_text.dart';
@@ -13,6 +16,7 @@ class ProductWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final restaurantProvider = Provider.of<RestaurantProvider>(context);
     final productProvider = Provider.of<ProductProvider>(context);
     return Padding(
       padding: const EdgeInsets.only(left: 4, right: 4, top: 4, bottom: 10),
@@ -68,7 +72,7 @@ class ProductWidget extends StatelessWidget {
                           text: productModel.name,
                           colors: black,
                           size: 16,
-                          weight: FontWeight.normal,
+                          weight: FontWeight.w700,
                         ),
                       ),
                       Padding(
@@ -105,17 +109,30 @@ class ProductWidget extends StatelessWidget {
                         CustomText(
                           text: "From: ",
                           colors: grey,
-                          weight: FontWeight.w300,
+                          weight: FontWeight.w600,
                           size: 14,
                         ),
                         SizedBox(
                           width: 10,
                         ),
-                        CustomText(
-                          text: productModel.restaurantName,
-                          colors: primary,
-                          weight: FontWeight.w300,
-                          size: 14,
+                        GestureDetector(
+                          onTap: () async {
+                            await productProvider.loadProductsByRestaurant(
+                                restaurantId: productModel.restaurantId);
+                            await restaurantProvider.loadSingleRestaurant(
+                                restaurantId: productModel.restaurantId);
+                            changeScreen(
+                                context,
+                                RestaurantScreen(
+                                    restaurantModel:
+                                        restaurantProvider.restaurant));
+                          },
+                          child: CustomText(
+                            text: productModel.restaurantName,
+                            colors: primary,
+                            weight: FontWeight.w500,
+                            size: 14,
+                          ),
                         ),
                       ],
                     ),
@@ -165,7 +182,7 @@ class ProductWidget extends StatelessWidget {
                           text: "\u{20B9}${productModel.price}",
                           colors: black,
                           size: 16,
-                          weight: FontWeight.normal,
+                          weight: FontWeight.w500,
                         ),
                       ),
                     ],

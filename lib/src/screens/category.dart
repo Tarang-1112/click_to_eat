@@ -1,6 +1,8 @@
+import 'package:click_to_eat/src/helpers/screen_navigation.dart';
 import 'package:click_to_eat/src/helpers/style.dart';
 import 'package:click_to_eat/src/models/category.dart';
 import 'package:click_to_eat/src/providers/product.dart';
+import 'package:click_to_eat/src/screens/details.dart';
 import 'package:click_to_eat/src/widgets/custom_text.dart';
 import 'package:click_to_eat/src/widgets/loading.dart';
 import 'package:click_to_eat/src/widgets/product.dart';
@@ -73,7 +75,7 @@ class CategoryScreen extends StatelessWidget {
                         text: categoryModel.name,
                         colors: white,
                         size: 26,
-                        weight: FontWeight.w300,
+                        weight: FontWeight.bold,
                       ))),
               Positioned.fill(
                   top: 5,
@@ -105,7 +107,11 @@ class CategoryScreen extends StatelessWidget {
             children: productProvider.productsByCategory
                 .map((item) => GestureDetector(
                       onTap: () {
-//                changeScreen(context, RestaurantScreen(restaurantModel: item,));
+                        changeScreen(
+                            context,
+                            Details(
+                              product: item,
+                            ));
                       },
                       child: ProductWidget(
                         productModel: item,

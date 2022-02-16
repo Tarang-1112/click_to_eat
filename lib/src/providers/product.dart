@@ -7,9 +7,11 @@ class ProductProvider with ChangeNotifier {
   List<ProductModel> products = [];
   List<ProductModel> productsByCategory = [];
   List<ProductModel> productsByRestaurant = [];
+  List<ProductModel> productSearchFood = [];
 
   ProductProvider.initialize() {
     _loadProducts();
+    searchProduct(productName: "k");
   }
 
   _loadProducts() async {
@@ -26,6 +28,13 @@ class ProductProvider with ChangeNotifier {
   Future loadProductsByRestaurant({required String restaurantId}) async {
     productsByRestaurant =
         await _productServices.getProductsByRestaurant(id: restaurantId);
+    notifyListeners();
+  }
+
+  Future searchProduct({String? productName}) async {
+    productSearchFood =
+        await _productServices.searchProducts(productName: productName);
+    print("The Number of Products : ${productSearchFood.length}");
     notifyListeners();
   }
 }

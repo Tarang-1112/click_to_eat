@@ -1,6 +1,8 @@
+import 'package:click_to_eat/src/helpers/screen_navigation.dart';
 import 'package:click_to_eat/src/helpers/style.dart';
 import 'package:click_to_eat/src/models/restaurant.dart';
 import 'package:click_to_eat/src/providers/product.dart';
+import 'package:click_to_eat/src/screens/details.dart';
 import 'package:click_to_eat/src/widgets/custom_text.dart';
 import 'package:click_to_eat/src/widgets/loading.dart';
 import 'package:click_to_eat/src/widgets/product.dart';
@@ -11,7 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class RestaurantScreen extends StatelessWidget {
-  final RestaurantModel restaurantModel;
+  final RestaurantModel? restaurantModel;
 
   const RestaurantScreen({Key? key, required this.restaurantModel})
       : super(key: key);
@@ -41,7 +43,7 @@ class RestaurantScreen extends StatelessWidget {
                 ),
                 child: FadeInImage.memoryNetwork(
                   placeholder: kTransparentImage,
-                  image: restaurantModel.image,
+                  image: restaurantModel!.image,
                   height: 160,
                   fit: BoxFit.fill,
                   width: double.infinity,
@@ -77,7 +79,7 @@ class RestaurantScreen extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: CustomText(
-                    text: restaurantModel.name,
+                    text: restaurantModel!.name,
                     colors: white,
                     size: 26,
                     weight: FontWeight.w300,
@@ -91,8 +93,8 @@ class RestaurantScreen extends StatelessWidget {
                   child: Align(
                       alignment: Alignment.bottomCenter,
                       child: CustomText(
-                        text: "Average Price: \$" +
-                            restaurantModel.averagePrice.toString(),
+                        text: "Average Price: " +
+                            "\u{20B9}${restaurantModel!.averagePrice.toString()}",
                         colors: white,
                         size: 18,
                         weight: FontWeight.w300,
@@ -121,7 +123,7 @@ class RestaurantScreen extends StatelessWidget {
                                 size: 20,
                               ),
                             ),
-                            Text(restaurantModel.rating.toString()),
+                            Text(restaurantModel!.rating.toString()),
                           ],
                         ),
                       ),
@@ -203,7 +205,11 @@ class RestaurantScreen extends StatelessWidget {
             children: productProvider.productsByRestaurant
                 .map((item) => GestureDetector(
                       onTap: () {
-//                changeScreen(context, RestaurantScreen(restaurantModel: item,));
+                        changeScreen(
+                            context,
+                            Details(
+                              product: item,
+                            ));
                       },
                       child: ProductWidget(
                         productModel: item,
