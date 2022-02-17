@@ -1,10 +1,15 @@
 import 'package:carousel_nullsafety/carousel_nullsafety.dart';
+import 'package:click_to_eat/src/helpers/screen_navigation.dart';
 import 'package:click_to_eat/src/helpers/style.dart';
 import 'package:click_to_eat/src/models/products.dart';
+import 'package:click_to_eat/src/providers/app.dart';
+import 'package:click_to_eat/src/providers/user.dart';
+import 'package:click_to_eat/src/screens/cart.dart';
 import 'package:click_to_eat/src/widgets/bottom_navigation_icons.dart';
 import 'package:click_to_eat/src/widgets/custom_text.dart';
 import 'package:click_to_eat/src/widgets/small_floating_button.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Details extends StatefulWidget {
   final ProductModel product;
@@ -17,9 +22,13 @@ class Details extends StatefulWidget {
 
 class _DetailsState extends State<Details> {
   int quantity = 1;
+  final _key = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
+    final app = Provider.of<AppProvider>(context);
+    final user = Provider.of<UserProvider>(context);
     return Scaffold(
+      key: _key,
       appBar: AppBar(
         iconTheme: IconThemeData(color: white),
         backgroundColor: black,
@@ -28,7 +37,9 @@ class _DetailsState extends State<Details> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.shopping_cart),
-            onPressed: () {},
+            onPressed: () {
+              changeScreen(context, CartScreen());
+            },
           ),
         ],
         leading: IconButton(
@@ -127,7 +138,26 @@ class _DetailsState extends State<Details> {
                       }),
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () async {
+                    app.changeLoading();
+                    print("All set loading.");
+                    bool value = await user.addToCard(
+                        product: widget.product, quantity: quantity);
+                    print(value);
+                    if (value) {
+                      print("Item Added to Cart.");
+                      _key.currentState!.showSnackBar(
+                        SnackBar(
+                          content: Text("Added ro Cart!"),
+                        ),
+                      );
+                      user.reloadUserModel();
+                      app.changeLoading();
+                    } else {
+                      print("Item Not Added To Cart.");
+                    }
+                    print("Loading set to False.");
+                  },
                   child: Container(
                     decoration: BoxDecoration(
                         color: primary,

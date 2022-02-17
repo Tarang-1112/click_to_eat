@@ -1,3 +1,4 @@
+import 'package:click_to_eat/src/models/cart_item.dart';
 import 'package:click_to_eat/src/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -20,5 +21,21 @@ class UserServices {
     //     return UserModel.fromSnapshot(doc);
     //   });
     return UserModel.fromSnapshot(temp);
+  }
+
+  void addToCart({String? userId, CartItemModel? cartItem}) {
+    print("THE USER ID IS: $userId");
+    print("cart items are: ${cartItem.toString()}");
+    _firebaseFirestore.collection(collection).doc(userId).update({
+      "CART": FieldValue.arrayUnion([cartItem!.toMap()])
+    });
+  }
+
+  void removeFromCart({String? userId, CartItemModel? cartItem}) {
+    print("THE USER ID IS: $userId");
+    print("cart items are: ${cartItem.toString()}");
+    _firebaseFirestore.collection(collection).doc(userId).update({
+      "CART": FieldValue.arrayRemove([cartItem!.toMap()])
+    });
   }
 }

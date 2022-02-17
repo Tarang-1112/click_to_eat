@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:click_to_eat/src/helpers/user.dart';
+import 'package:click_to_eat/src/models/cart_item.dart';
+import 'package:click_to_eat/src/models/products.dart';
 import 'package:click_to_eat/src/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -58,6 +60,7 @@ class UserProvider with ChangeNotifier {
           'name': name.text,
           'email': email.text,
           'uid': result.user!.uid,
+          'CART': [],
           // 'likedFood': [],
           // 'likedRestaurant': [],
         });
@@ -73,6 +76,11 @@ class UserProvider with ChangeNotifier {
     status = Status.Unauthenticated;
     notifyListeners();
     return Future.delayed(Duration.zero);
+  }
+
+  Future<void> reloadUserModel() async {
+    userModel = await _userServices.getUserById(user!.uid);
+    notifyListeners();
   }
 
   void cleanControllers() {
@@ -93,11 +101,55 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<bool> addToCard({ProductModel? product, int? quantity}) async {
+    print("THE PRODUC IS: ${product.toString()}");
+    print("THE qty IS: ${quantity.toString()}");
+    try {
+      var uuid = Uuid();
+      String cartItemId = uuid.v4();
+      List<CartItemModel>? cart = userModel!.cart;
+      print("hii");
+      Map<String, dynamic> cartItem = {
+        "id": cartItemId,
+        "name": product!.name,
+        "image": product.image,
+        "restaurantId": product.restaurantId,
+        // "totalRestaurantSale": product.price * quantity,
+        "productId": product.id,
+        "price": product.price,
+        "quantity": quantity
+      };
+      print(cartItem);
+      print("how");
+      CartItemModel item = CartItemModel.fromSnapshot(cartItem);
+      print(item);
+      print("are");
+      print("CART ITEMS ARE : ${cart.toString()}");
+      _userServices.addToCart(userId: user!.uid, cartItem: item);
+      return true;
+    } catch (e) {
+      print("THE ERROR ${e.toString()}");
+      return false;
+    }
+  }
+
 //general methods
   bool _onError(String error) {
     status = Status.Unauthenticated;
     notifyListeners();
     print("Error :  $error");
     return false;
+  }
+
+  Future<bool> removeFromCart({CartItemModel? cartItem}) async {
+    print("THE PRODUC IS: ${cartItem.toString()}");
+
+    try {
+      _userServices.removeFromCart(userId: user!.uid, cartItem: cartItem);
+      return true;
+    } catch (e) {
+      print("THE ERROR ${e.toString()}");
+      return false;
+    }
   }
 }

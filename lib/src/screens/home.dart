@@ -5,7 +5,7 @@ import 'package:click_to_eat/src/providers/category.dart';
 import 'package:click_to_eat/src/providers/product.dart';
 import 'package:click_to_eat/src/providers/restaurant.dart';
 import 'package:click_to_eat/src/providers/user.dart';
-import 'package:click_to_eat/src/screens/bag.dart';
+import 'package:click_to_eat/src/screens/cart.dart';
 import 'package:click_to_eat/src/screens/category.dart';
 import 'package:click_to_eat/src/screens/login.dart';
 import 'package:click_to_eat/src/screens/product_search.dart';
@@ -52,7 +52,7 @@ class _HomeState extends State<Home> {
             children: <Widget>[
               IconButton(
                   onPressed: () {
-                    changeScreen(context, ShoppingBag());
+                    changeScreen(context, CartScreen());
                   },
                   icon: Icon(Icons.shopping_cart)),
               // Positioned(
@@ -173,7 +173,7 @@ class _HomeState extends State<Home> {
             ),
             ListTile(
               onTap: () {
-                changeScreen(context, ShoppingBag());
+                changeScreen(context, CartScreen());
               },
               leading: Icon(Icons.shopping_cart),
               title: CustomText(
@@ -369,7 +369,7 @@ class _HomeState extends State<Home> {
             BottomNavIcon(onTap: () {}, image: "target.png", name: "Near By"),
             BottomNavIcon(
                 onTap: () {
-                  changeScreen(context, ShoppingBag());
+                  changeScreen(context, CartScreen());
                 },
                 image: "shopping_bag.jpg",
                 name: "Bag"),
