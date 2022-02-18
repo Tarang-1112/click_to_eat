@@ -26,13 +26,13 @@ class RestaurantSearchScreen extends StatelessWidget {
         elevation: 0.0,
         title: CustomText(
           text: "Restaurants",
-          colors: black,
+          colors: white,
           size: 20,
           weight: FontWeight.normal,
         ),
         centerTitle: true,
-        iconTheme: IconThemeData(color: black),
-        backgroundColor: white,
+        iconTheme: IconThemeData(color: grey),
+        backgroundColor: black,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -46,6 +46,7 @@ class RestaurantSearchScreen extends StatelessWidget {
           ),
         ],
       ),
+      backgroundColor: black,
       body:
           // app.isLoading
           //     ? Container(

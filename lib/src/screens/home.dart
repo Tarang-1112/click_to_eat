@@ -8,6 +8,7 @@ import 'package:click_to_eat/src/providers/user.dart';
 import 'package:click_to_eat/src/screens/cart.dart';
 import 'package:click_to_eat/src/screens/category.dart';
 import 'package:click_to_eat/src/screens/login.dart';
+import 'package:click_to_eat/src/screens/orders.dart';
 import 'package:click_to_eat/src/screens/product_search.dart';
 import 'package:click_to_eat/src/screens/restaurant.dart';
 import 'package:click_to_eat/src/screens/restaurant_search.dart';
@@ -139,7 +140,10 @@ class _HomeState extends State<Home> {
               ),
             ),
             ListTile(
-              onTap: () {},
+              onTap: () async {
+                await user.getOrders();
+                changeScreen(context, OrdersScreen());
+              },
               leading: Icon(Icons.bookmark_border),
               title: CustomText(
                 text: "My orders",
@@ -208,7 +212,7 @@ class _HomeState extends State<Home> {
                   child: ListTile(
                     leading: Icon(
                       Icons.search,
-                      color: red,
+                      color: purple,
                     ),
                     title: TextField(
                       textInputAction: TextInputAction.search,
@@ -240,18 +244,18 @@ class _HomeState extends State<Home> {
                 CustomText(
                   text: "Search By : ",
                   size: 16,
-                  colors: grey,
-                  weight: FontWeight.w300,
+                  colors: grey.shade700,
+                  weight: FontWeight.bold,
                 ),
                 DropdownButton<String>(
                   value: app.filterBy,
                   style: TextStyle(
-                    color: primary,
-                    fontWeight: FontWeight.w300,
+                    color: black,
+                    fontWeight: FontWeight.bold,
                   ),
                   icon: Icon(
                     Icons.filter_list,
-                    color: purple,
+                    color: black,
                   ),
                   elevation: 0,
                   onChanged: (value) {

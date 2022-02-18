@@ -149,6 +149,7 @@ class _DetailsState extends State<Details> {
                       _key.currentState!.showSnackBar(
                         SnackBar(
                           content: Text("Added ro Cart!"),
+                          duration: Duration(milliseconds: 500),
                         ),
                       );
                       user.reloadUserModel();

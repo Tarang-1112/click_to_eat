@@ -1,9 +1,14 @@
+import 'dart:ui';
+
+import 'package:click_to_eat/src/helpers/order.dart';
 import 'package:click_to_eat/src/helpers/style.dart';
+import 'package:click_to_eat/src/models/cart_item.dart';
 import 'package:click_to_eat/src/providers/app.dart';
 import 'package:click_to_eat/src/providers/user.dart';
 import 'package:click_to_eat/src/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({Key? key}) : super(key: key);
@@ -13,6 +18,7 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  OrderServices _orderServices = OrderServices();
   final _key = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
@@ -21,14 +27,14 @@ class _CartScreenState extends State<CartScreen> {
     return Scaffold(
       key: _key,
       appBar: AppBar(
-        iconTheme: IconThemeData(color: black),
-        backgroundColor: white,
+        iconTheme: IconThemeData(color: grey),
+        backgroundColor: black,
         elevation: 0.0,
         title: CustomText(
-          text: "Shopping Cart",
-          colors: black,
-          size: 16,
-          weight: FontWeight.normal,
+          text: "My Cart",
+          colors: white,
+          size: 20,
+          weight: FontWeight.bold,
         ),
         leading: IconButton(
             icon: Icon(Icons.close),
@@ -36,20 +42,20 @@ class _CartScreenState extends State<CartScreen> {
               Navigator.pop(context);
             }),
       ),
-      backgroundColor: white,
+      backgroundColor: black,
       body: ListView.builder(
           itemCount: user.userModel!.cart!.length,
           itemBuilder: (_, index) {
             return Padding(
               padding: const EdgeInsets.all(16),
               child: Container(
-                height: 120,
+                height: 100,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     color: white,
                     boxShadow: [
                       BoxShadow(
-                          color: red.withOpacity(0.2),
+                          color: grey.withOpacity(0.5),
                           offset: Offset(3, 2),
                           blurRadius: 30)
                     ]),
@@ -87,7 +93,7 @@ class _CartScreenState extends State<CartScreen> {
                                 ),
                                 TextSpan(
                                   text:
-                                      "\$${user.userModel!.cart![index].price} \n\n",
+                                      "\u{20B9}${user.userModel!.cart![index].price} \n\n",
                                   style: TextStyle(
                                       color: black,
                                       fontSize: 18,
@@ -123,8 +129,12 @@ class _CartScreenState extends State<CartScreen> {
                               if (value) {
                                 user.reloadUserModel();
                                 print("Item added to cart");
-                                _key.currentState!.showSnackBar(SnackBar(
-                                    content: Text("Removed from Cart!")));
+                                _key.currentState!.showSnackBar(
+                                  SnackBar(
+                                    content: Text("Removed from Cart!"),
+                                    duration: Duration(milliseconds: 500),
+                                  ),
+                                );
                                 app.changeLoading();
                                 return;
                               } else {
@@ -156,12 +166,12 @@ class _CartScreenState extends State<CartScreen> {
                       style: TextStyle(
                           color: grey,
                           fontSize: 22,
-                          fontWeight: FontWeight.w400),
+                          fontWeight: FontWeight.bold),
                     ),
                     TextSpan(
-                      text: " \$${user.userModel!.totalCartPrice}",
+                      text: " \u{20B9}${user.userModel!.totalCartPrice}",
                       style: TextStyle(
-                          color: primary,
+                          color: purple.shade100,
                           fontSize: 22,
                           fontWeight: FontWeight.normal),
                     ),
@@ -196,6 +206,7 @@ class _CartScreenState extends State<CartScreen> {
                                         Text(
                                           "Your Cart is Empty.",
                                           textAlign: TextAlign.center,
+                                          style: TextStyle(color: black),
                                         ),
                                       ],
                                     ),
@@ -216,24 +227,60 @@ class _CartScreenState extends State<CartScreen> {
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                             child: Container(
-                              height: 200,
+                              height: 141,
                               child: Padding(
                                 padding: const EdgeInsets.all(12),
                                 child: Column(
                                   children: <Widget>[
                                     Text(
-                                      'You will be charged \$${user.userModel!.totalCartPrice! / 100} upon delivery!',
+                                      'You will be charged \u{20B9}${user.userModel!.totalCartPrice! * 0.10} upon delivery!',
                                       textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600),
                                     ),
                                     SizedBox(
                                       width: 320.0,
                                       child: RaisedButton(
-                                        onPressed: () {},
+                                        onPressed: () async {
+                                          var uuid = Uuid();
+                                          String id = uuid.v4();
+                                          _orderServices.createOrder(
+                                            userId: user.user!.uid,
+                                            id: id,
+                                            description:
+                                                "Some Random Description",
+                                            status: "Complete",
+                                            totalPrice:
+                                                user.userModel!.totalCartPrice,
+                                            cart: user.userModel!.cart,
+                                          );
+                                          for (CartItemModel cartItem
+                                              in user.userModel!.cart!) {
+                                            bool value =
+                                                await user.removeFromCart(
+                                                    cartItem: cartItem);
+                                            if (value) {
+                                              user.reloadUserModel();
+                                              print("Item added to cart.");
+                                              _key.currentState!.showSnackBar(
+                                                  SnackBar(
+                                                      content: Text(
+                                                          "Removed from Cart!")));
+                                            } else {
+                                              print("Item was not removed.");
+                                            }
+                                          }
+                                          _key.currentState!.showSnackBar(
+                                              SnackBar(
+                                                  content:
+                                                      Text("Order created!")));
+                                          Navigator.pop(context);
+                                        },
                                         child: Text(
                                           "Accept",
                                           style: TextStyle(color: Colors.white),
                                         ),
-                                        color: const Color(0xFF1BC0C5),
+                                        color: Colors.green,
                                       ),
                                     ),
                                     SizedBox(

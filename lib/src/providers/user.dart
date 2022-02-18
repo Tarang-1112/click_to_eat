@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'package:click_to_eat/src/helpers/order.dart';
 import 'package:click_to_eat/src/helpers/user.dart';
 import 'package:click_to_eat/src/models/cart_item.dart';
+import 'package:click_to_eat/src/models/orders.dart';
 import 'package:click_to_eat/src/models/products.dart';
 import 'package:click_to_eat/src/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,6 +19,7 @@ class UserProvider with ChangeNotifier {
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   UserModel? userModel = UserModel(name: "Loading", email: "Loading", id: "");
   UserServices _userServices = UserServices();
+  OrderServices _orderServices = OrderServices();
   Status status = Status.Uninitialized;
 
   //getters
@@ -25,6 +28,8 @@ class UserProvider with ChangeNotifier {
   // User get user => _user!;
 
   final formkey = GlobalKey<FormState>();
+
+  List<OrderModel> orders = [];
 
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
@@ -139,6 +144,10 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
     print("Error :  $error");
     return false;
+  }
+
+  getOrders() async {
+    orders = await _orderServices.getUsersOrder(userId: user!.uid);
   }
 
   Future<bool> removeFromCart({CartItemModel? cartItem}) async {

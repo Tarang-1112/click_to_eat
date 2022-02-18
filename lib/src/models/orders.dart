@@ -1,23 +1,28 @@
+import 'package:click_to_eat/src/models/cart_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OrderModel {
   final String id;
   final String description;
-  final String productId;
+  // final String productId;
+  static const CART = "cart";
   final String userId;
-  final int amount;
+  final num total;
   final String status;
   final int createdAt;
+  final String restaurantId;
   //static const CREATED_AT = "createdAt";
 
   OrderModel({
     required this.id,
     required this.description,
-    required this.productId,
+    // required this.productId,
+    this.cart,
     required this.userId,
-    required this.amount,
+    required this.total,
     required this.status,
     required this.createdAt,
+    required this.restaurantId,
   });
 
   // String _id = "";
@@ -37,16 +42,20 @@ class OrderModel {
   // int get amount => _amount;
   // int get createdAt => _createdAt;
 
+  List? cart = [];
+
   factory OrderModel.fromSnapshot(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
     return OrderModel(
       id: snapshot.data()!["id"] ?? "",
       description: snapshot.data()!["description"] ?? "",
-      productId: snapshot.data()!["productId"] ?? "",
+      //  productId: snapshot.data()!["productId"] ?? "",
+      cart: snapshot.data()!["CART"],
       userId: snapshot.data()!["userId"] ?? "",
-      amount: snapshot.data()!["amount"] ?? 0,
+      total: snapshot.data()!["total"] ?? 0,
       status: snapshot.data()!["status"] ?? "",
       createdAt: snapshot.data()!["createdAt"] ?? 0,
+      restaurantId: snapshot.data()!["restaurantId"] ?? "",
     );
   }
 
