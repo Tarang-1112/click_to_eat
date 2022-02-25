@@ -43,9 +43,9 @@ class RestaurantModel {
   factory RestaurantModel.fromSnapshot(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
     return RestaurantModel(
-      id: snapshot.data()!["id"] ?? "",
+      id: snapshot.id,
       name: snapshot.data()!["name"] ?? "",
-      averagePrice: snapshot.data()!["averagePrice"] ?? "",
+      averagePrice: snapshot.data()!["averagePrice"] ?? 0,
       // price: snapshot.data()!["price"] ?? 0,
       image: snapshot.data()!["image"] ?? "",
       rates: snapshot.data()!["rates"] ?? 0,

@@ -9,6 +9,8 @@ class UserModel {
   String id = "id";
   String? stripeId = "stripeId";
   static const CART = "cart";
+  final bool? isAdmin;
+
   //List? likedRestaurant = []; //"likedFood";
   //static const liked_restaurant = "likedRestaurant";
 
@@ -19,6 +21,7 @@ class UserModel {
     this.stripeId,
     this.totalCartPrice,
     this.cart,
+    this.isAdmin,
     //this.likedRestaurant,
   });
 
@@ -54,6 +57,7 @@ class UserModel {
       stripeId: snapshot.data()!["stripeId"] ?? "",
       cart: ca,
       totalCartPrice: total,
+      isAdmin: snapshot.data()!["isAdmin"],
       // likedFood: snapshot.data()!["likedFood"] ?? [],
       // likedRestaurant: snapshot.data()!["likedRestaurant"] ?? [],
     );

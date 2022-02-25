@@ -46,4 +46,17 @@ class OrderServices {
         }
         return orders;
       });
+
+  Future<List<OrderModel>> restaurantOrders({String? restaurantId}) async =>
+      _firebaseFirestore
+          .collection(collection)
+          .where("restaurantIds", arrayContains: restaurantId)
+          .get()
+          .then((result) {
+        List<OrderModel> orders = [];
+        for (DocumentSnapshot<Map<String, dynamic>> order in result.docs) {
+          orders.add(OrderModel.fromSnapshot(order));
+        }
+        return orders;
+      });
 }

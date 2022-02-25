@@ -4,6 +4,7 @@ import 'package:click_to_eat/src/helpers/style.dart';
 import 'package:click_to_eat/src/models/products.dart';
 import 'package:click_to_eat/src/providers/app.dart';
 import 'package:click_to_eat/src/providers/user.dart';
+import 'package:click_to_eat/src/restroAdmin/screens/restroEditProductScreen.dart';
 import 'package:click_to_eat/src/screens/cart.dart';
 import 'package:click_to_eat/src/widgets/bottom_navigation_icons.dart';
 import 'package:click_to_eat/src/widgets/custom_text.dart';
@@ -11,16 +12,17 @@ import 'package:click_to_eat/src/widgets/small_floating_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class Details extends StatefulWidget {
+class RestroProductDetails extends StatefulWidget {
   final ProductModel product;
 
-  const Details({Key? key, required this.product}) : super(key: key);
+  const RestroProductDetails({Key? key, required this.product})
+      : super(key: key);
 
   @override
-  _DetailsState createState() => _DetailsState();
+  _RestroProductDetailsState createState() => _RestroProductDetailsState();
 }
 
-class _DetailsState extends State<Details> {
+class _RestroProductDetailsState extends State<RestroProductDetails> {
   int quantity = 1;
   final _key = GlobalKey<ScaffoldState>();
   @override
@@ -36,9 +38,14 @@ class _DetailsState extends State<Details> {
         title: Text(widget.product.name),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.shopping_cart),
+            icon: Icon(Icons.edit),
             onPressed: () {
-              changeScreen(context, CartScreen());
+              changeScreen(
+                context,
+                EditProductScreen(
+                  productModel: widget.product,
+                ),
+              );
             },
           ),
         ],
@@ -122,44 +129,8 @@ class _DetailsState extends State<Details> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: IconButton(
-                        icon: Icon(
-                          Icons.remove,
-                          size: 36,
-                          color: purple.shade700,
-                        ),
-                        onPressed: () {
-                          if (quantity != 1) {
-                            setState(() {
-                              quantity -= 1;
-                            });
-                          }
-                        }),
-                  ),
                   GestureDetector(
-                    onTap: () async {
-                      app.changeLoading();
-                      print("All set loading.");
-                      bool value = await user.addToCard(
-                          product: widget.product, quantity: quantity);
-                      print(value);
-                      if (value) {
-                        print("Item Added to Cart.");
-                        _key.currentState!.showSnackBar(
-                          SnackBar(
-                            content: Text("Added ro Cart!"),
-                            duration: Duration(milliseconds: 500),
-                          ),
-                        );
-                        user.reloadUserModel();
-                        app.changeLoading();
-                      } else {
-                        print("Item Not Added To Cart.");
-                      }
-                      print("Loading set to False.");
-                    },
+                    onTap: () async {},
                     child: Container(
                       decoration: BoxDecoration(
                           color: primary,
@@ -167,27 +138,13 @@ class _DetailsState extends State<Details> {
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(28, 12, 28, 12),
                         child: CustomText(
-                          text: "Add $quantity To Cart",
+                          text: "Edit Product",
                           colors: white,
                           size: 22,
                           weight: FontWeight.w300,
                         ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: IconButton(
-                        icon: Icon(
-                          Icons.add,
-                          size: 36,
-                          color: purple.shade700,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            quantity += 1;
-                          });
-                        }),
                   ),
                 ],
               ),

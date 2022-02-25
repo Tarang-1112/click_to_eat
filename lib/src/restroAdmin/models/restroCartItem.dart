@@ -66,10 +66,11 @@ class CartItemModel {
   final String name;
   final String image;
   final String productId;
-  final num quantity;
-  final num price;
+  final int quantity;
+  final int price;
   final String restaurantId;
   final num totalRestaurantSale;
+  final num createdAt;
 
   CartItemModel({
     required this.id,
@@ -80,6 +81,7 @@ class CartItemModel {
     required this.quantity,
     required this.restaurantId,
     required this.totalRestaurantSale,
+    required this.createdAt,
   });
 
   // String _id = "";
@@ -102,7 +104,8 @@ class CartItemModel {
 
   // int get quantity => _quantity;
 
-  factory CartItemModel.fromSnapshot(Map<String, dynamic> snapshot) {
+  factory CartItemModel.fromSnapshot(
+      Map<String, dynamic> snapshot, num createdAt) {
     return CartItemModel(
       id: snapshot["id"] ?? "",
       name: snapshot["name"] ?? "",
@@ -112,9 +115,10 @@ class CartItemModel {
       quantity: snapshot["quantity"] ?? 0,
       restaurantId: snapshot["restaurantId"],
       totalRestaurantSale: snapshot["totalRestaurantSale"],
+      createdAt: createdAt,
     );
   }
-  Map<String, dynamic> toMap() => {
+  Map toMap() => {
         "id": id,
         "image": image,
         "name": name,

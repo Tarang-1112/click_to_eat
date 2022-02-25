@@ -42,15 +42,19 @@ class OrderModel {
   // int get amount => _amount;
   // int get createdAt => _createdAt;
 
-  List? cart = [];
+  List<CartItemModel>? cart;
 
   factory OrderModel.fromSnapshot(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    List<CartItemModel> ca = [];
+    snapshot
+        .data()!["CART"]
+        .forEach((item) => ca.add(CartItemModel.fromSnapshot(item)));
     return OrderModel(
       id: snapshot.data()!["id"] ?? "",
       description: snapshot.data()!["description"] ?? "",
       //  productId: snapshot.data()!["productId"] ?? "",
-      cart: snapshot.data()!["CART"],
+      cart: ca, //snapshot.data()!["CART"],
       userId: snapshot.data()!["userId"] ?? "",
       total: snapshot.data()!["total"] ?? 0,
       status: snapshot.data()!["status"] ?? "",

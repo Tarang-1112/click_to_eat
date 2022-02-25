@@ -9,9 +9,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
-enum Status { Uninitialized, Authenticated, Authenticating, Unauthenticated }
+enum Status {
+  Uninitialized,
+  Authenticated,
+  Authenticating,
+  Unauthenticated,
+  IsAdmin,
+}
 
 class UserProvider with ChangeNotifier {
   FirebaseAuth? auth;
@@ -35,6 +42,16 @@ class UserProvider with ChangeNotifier {
   TextEditingController password = TextEditingController();
   TextEditingController name = TextEditingController();
 
+  bool? isAdmin;
+  bool? isAdminSharedPref;
+
+  void setIsAdmin() async {
+    final _prefs = await SharedPreferences.getInstance();
+    final isAdmin = _prefs.getBool('isAdmin');
+    isAdminSharedPref = isAdmin;
+    notifyListeners();
+  }
+
   UserProvider.initialize() : auth = FirebaseAuth.instance {
     auth!.authStateChanges().listen((event) {
       _onStateChanged(FirebaseAuth.instance.currentUser);
@@ -45,8 +62,17 @@ class UserProvider with ChangeNotifier {
     try {
       status = Status.Authenticating;
       notifyListeners();
-      await auth!.signInWithEmailAndPassword(
+      final result = await auth!.signInWithEmailAndPassword(
           email: email.text.trim(), password: password.text.trim());
+      final user = await _userServices.getUserById(result.user!.uid);
+      isAdmin = user.isAdmin;
+      if (isAdmin!) {
+        status = Status.IsAdmin;
+      }
+      final _prefs = await SharedPreferences.getInstance();
+      _prefs.setBool('isAdmin', isAdmin!);
+      notifyListeners();
+
       return true;
     } catch (e) {
       return _onError(e.toString());
@@ -54,6 +80,8 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<bool> singUp() async {
+    final SharedPreferences _prefs = await SharedPreferences.getInstance();
+
     try {
       status = Status.Authenticating;
       notifyListeners();
@@ -66,10 +94,12 @@ class UserProvider with ChangeNotifier {
           'email': email.text,
           'uid': result.user!.uid,
           'CART': [],
+          "isAdmin": false,
           // 'likedFood': [],
           // 'likedRestaurant': [],
         });
       });
+      await _prefs.setBool('isAdmin', false);
       return true;
     } catch (e) {
       return _onError(e.toString());
@@ -99,14 +129,20 @@ class UserProvider with ChangeNotifier {
       status = Status.Unauthenticated;
     } else {
       user = firebaseUser;
-      status = Status.Authenticated;
+      final _prefs = await SharedPreferences.getInstance();
+      final _isAdmin = _prefs.getBool('isAdmin');
+      if (_isAdmin!) {
+        status = Status.IsAdmin;
+      } else {
+        status = Status.Authenticated;
+      }
       //final uid = FirebaseAuth.instance.currentUser!.uid;
       userModel = await _userServices.getUserById(user!.uid);
     }
     notifyListeners();
   }
 
-  Future<bool> addToCard({ProductModel? product, int? quantity}) async {
+  Future<bool> addToCard({ProductModel? product, num? quantity}) async {
     print("THE PRODUC IS: ${product.toString()}");
     print("THE qty IS: ${quantity.toString()}");
     try {
@@ -119,10 +155,10 @@ class UserProvider with ChangeNotifier {
         "name": product!.name,
         "image": product.image,
         "restaurantId": product.restaurantId,
-        // "totalRestaurantSale": product.price * quantity,
+        "totalRestaurantSale": product.price * quantity!,
         "productId": product.id,
         "price": product.price,
-        "quantity": quantity
+        "quantity": quantity,
       };
       print(cartItem);
       print("how");
