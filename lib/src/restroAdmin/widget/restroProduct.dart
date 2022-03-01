@@ -3,6 +3,7 @@ import 'package:click_to_eat/src/helpers/style.dart';
 import 'package:click_to_eat/src/models/products.dart';
 import 'package:click_to_eat/src/providers/product.dart';
 import 'package:click_to_eat/src/providers/restaurant.dart';
+import 'package:click_to_eat/src/restroAdmin/providers/restroAdmin.dart';
 import 'package:click_to_eat/src/screens/restaurant.dart';
 import 'package:click_to_eat/src/widgets/loading.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,7 @@ class RestroProductWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final restaurantProvider = Provider.of<RestaurantProvider>(context);
+    final restaurantAdminProvider = Provider.of<RestroAdminProvider>(context);
     final productProvider = Provider.of<ProductProvider>(context);
     return Padding(
       padding: const EdgeInsets.only(left: 4, right: 4, top: 4, bottom: 10),
@@ -215,7 +216,18 @@ class RestroProductWidget extends StatelessWidget {
                                           SizedBox(
                                             width: 320.0,
                                             child: RaisedButton(
-                                              onPressed: () async {},
+                                              onPressed: () async {
+                                                if (!await productProvider
+                                                    .deleteRestroProduct(
+                                                        id: productModel.id)) {
+                                                  print("delete Faled");
+                                                  return;
+                                                }
+                                                productProvider.clear();
+                                                restaurantAdminProvider
+                                                    .reload();
+                                                Navigator.pop(context);
+                                              },
                                               child: Text(
                                                 "Yes",
                                                 style: TextStyle(

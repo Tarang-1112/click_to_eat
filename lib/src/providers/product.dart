@@ -23,6 +23,19 @@ class ProductProvider with ChangeNotifier {
   File? productImage;
   final picker = ImagePicker();
   String? productImageFileName;
+  ProductModel productModel = ProductModel(
+    id: "Loading",
+    name: "Loading",
+    image: "",
+    rates: 0,
+    rating: 0,
+    price: 0,
+    restaurantId: "Loading",
+    restaurantName: "Loading",
+    category: "Loading",
+    featured: true,
+    description: "Loading",
+  );
 
   ProductProvider.initialize() {
     _loadProducts();
@@ -41,6 +54,7 @@ class ProductProvider with ChangeNotifier {
   }
 
   Future loadProductsByRestaurant({required String restaurantId}) async {
+    productsByRestaurant.clear();
     productsByRestaurant =
         await _productServices.getProductsByRestaurant(id: restaurantId);
     notifyListeners();
@@ -78,6 +92,20 @@ class ProductProvider with ChangeNotifier {
       print(e.toString());
       return false;
     }
+  }
+
+  Future<bool> editProduct(
+      {String? id, String? name, String? description, num? price}) async {
+    _productServices.updateProduct(
+        id: id, name: name, description: description, price: price);
+    notifyListeners();
+    return true;
+  }
+
+  Future<bool> deleteRestroProduct({String? id}) async {
+    _productServices.deleteProduct(id: id);
+    notifyListeners();
+    return true;
   }
 
   changeFeatured() {

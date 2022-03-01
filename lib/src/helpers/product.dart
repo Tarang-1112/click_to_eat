@@ -21,6 +21,25 @@ class ProductServices {
     });
   }
 
+  void updateProduct(
+      {String? id, String? name, String? description, num? price}) async {
+    print(id);
+    _firestore.collection(collection).doc(id).update({
+      "name": name,
+      "description": description,
+      "price": price,
+    }).then((value) {
+      print(id);
+      print("Success");
+    });
+  }
+
+  void deleteProduct({String? id}) {
+    _firestore.collection(collection).doc(id).delete().then((value) {
+      print("Delete Sucesses");
+    });
+  }
+
   Future<List<ProductModel>> getProducts() async =>
       _firestore.collection(collection).get().then((result) {
         List<ProductModel> products = [];

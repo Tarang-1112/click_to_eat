@@ -152,6 +152,8 @@ class RestroAdminProvider with ChangeNotifier {
   }
 
   getTotalSales() async {
+    cartItems.clear();
+    totalSales = 0;
     for (OrderModel order in orders) {
       for (CartItemModel item in order.cart!) {
         if (item.restaurantId == user!.uid) {
