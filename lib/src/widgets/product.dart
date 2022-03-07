@@ -173,7 +173,9 @@ class _ProductWidgetState extends State<ProductWidget> {
                           Padding(
                             padding: const EdgeInsets.only(left: 8.0),
                             child: CustomText(
-                              text: widget.productModel.rating.toString(),
+                              text: (widget.productModel.rating /
+                                      widget.productModel.rates)
+                                  .toStringAsPrecision(2),
                               colors: grey,
                               size: 14.0,
                               weight: FontWeight.normal,

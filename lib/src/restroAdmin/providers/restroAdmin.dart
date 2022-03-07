@@ -45,6 +45,7 @@ class RestroAdminProvider with ChangeNotifier {
 
   RestroAdminProvider.initialize() : auth = FirebaseAuth.instance {
     _onStateChanged(FirebaseAuth.instance.currentUser);
+    getOrders();
   }
 
   Future<bool> signIn() async {

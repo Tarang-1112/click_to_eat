@@ -1,6 +1,7 @@
 import 'dart:io';
 
 //import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
@@ -10,6 +11,7 @@ import '../helpers/product.dart';
 import '../models/products.dart';
 
 class ProductProvider with ChangeNotifier {
+  User? user;
   ProductServices _productServices = ProductServices();
   List<ProductModel> products = [];
   List<ProductModel> productsByCategory = [];
@@ -41,6 +43,7 @@ class ProductProvider with ChangeNotifier {
 
   ProductProvider.initialize() {
     _loadProducts();
+
     // searchProduct(productName: "k");
   }
 

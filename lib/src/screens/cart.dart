@@ -5,6 +5,7 @@ import 'package:click_to_eat/src/helpers/style.dart';
 import 'package:click_to_eat/src/models/cart_item.dart';
 import 'package:click_to_eat/src/providers/app.dart';
 import 'package:click_to_eat/src/providers/user.dart';
+import 'package:click_to_eat/src/restroAdmin/providers/restroAdmin.dart';
 import 'package:click_to_eat/src/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +25,7 @@ class _CartScreenState extends State<CartScreen> {
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context);
     final app = Provider.of<AppProvider>(context);
+    final restroAdminProvider = Provider.of<RestroAdminProvider>(context);
     return Scaffold(
       key: _key,
       appBar: AppBar(
@@ -227,7 +229,7 @@ class _CartScreenState extends State<CartScreen> {
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                             child: Container(
-                              height: 141,
+                              height: 160,
                               child: Padding(
                                 padding: const EdgeInsets.all(12),
                                 child: Column(
@@ -275,6 +277,7 @@ class _CartScreenState extends State<CartScreen> {
                                                   content:
                                                       Text("Order created!")));
                                           Navigator.pop(context);
+                                          restroAdminProvider.reload();
                                         },
                                         child: Text(
                                           "Accept",
