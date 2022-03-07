@@ -1,17 +1,27 @@
 import 'package:click_to_eat/src/helpers/style.dart';
 import 'package:click_to_eat/src/models/restaurant.dart';
+import 'package:click_to_eat/src/providers/restaurant.dart';
+import 'package:click_to_eat/src/providers/user.dart';
 import 'package:click_to_eat/src/widgets/loading.dart';
 import 'package:click_to_eat/src/widgets/small_floating_button.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-class RestaurantWidget extends StatelessWidget {
+class RestaurantWidget extends StatefulWidget {
   final RestaurantModel restaurant;
   const RestaurantWidget({Key? key, required this.restaurant})
       : super(key: key);
 
   @override
+  State<RestaurantWidget> createState() => _RestaurantWidgetState();
+}
+
+class _RestaurantWidgetState extends State<RestaurantWidget> {
+  @override
   Widget build(BuildContext context) {
+    final restaurantProvider = Provider.of<RestaurantProvider>(context);
+    final user = Provider.of<UserProvider>(context);
     return Padding(
       padding:
           const EdgeInsets.only(top: 2.0, left: 2.0, right: 2.0, bottom: 4.0),
@@ -35,7 +45,7 @@ class RestaurantWidget extends StatelessWidget {
                   Center(
                     child: FadeInImage.memoryNetwork(
                         placeholder: kTransparentImage,
-                        image: restaurant.image),
+                        image: widget.restaurant.image),
                   ),
                 ],
               ),
@@ -46,7 +56,35 @@ class RestaurantWidget extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                SmallButton(Icons.favorite),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        widget.restaurant.liked = !widget.restaurant.liked;
+                      });
+                      restaurantProvider.likeOrDislikeProduct(
+                        userId: user.userModel!.id,
+                        restaurant: widget.restaurant,
+                        liked: widget.restaurant.liked,
+                      );
+                      restaurantProvider.loadLikedRestaurants(
+                          id: user.userModel!.id);
+                    },
+                    child: !widget.restaurant.liked
+                        ? Icon(
+                            Icons.favorite_sharp,
+                            size: 20,
+                            color: red,
+                          )
+                        : Icon(
+                            Icons.favorite_border,
+                            size: 20,
+                            color: red,
+                          ),
+                  ),
+                ),
+                //SmallButton(Icons.favorite),
                 // SizedBox(
                 //   width: 220,
                 // ),
@@ -71,7 +109,7 @@ class RestaurantWidget extends StatelessWidget {
                         ),
                         Padding(
                           padding: const EdgeInsets.all(10.0),
-                          child: Text(restaurant.rating.toString()),
+                          child: Text(widget.restaurant.rating.toString()),
                         ),
                       ],
                     ),
@@ -118,7 +156,7 @@ class RestaurantWidget extends StatelessWidget {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                              text: "${restaurant.name} \n",
+                              text: "${widget.restaurant.name} \n",
                               style: TextStyle(
                                   fontSize: 20, fontWeight: FontWeight.bold)),
                           TextSpan(
@@ -126,7 +164,7 @@ class RestaurantWidget extends StatelessWidget {
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.normal)),
                           TextSpan(
-                              text: "\u{20B9}${restaurant.averagePrice}",
+                              text: "\u{20B9}${widget.restaurant.averagePrice}",
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold)),
                         ],

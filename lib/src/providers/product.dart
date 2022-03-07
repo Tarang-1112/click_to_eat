@@ -15,9 +15,11 @@ class ProductProvider with ChangeNotifier {
   List<ProductModel> productsByCategory = [];
   List<ProductModel> productsByRestaurant = [];
   List<ProductModel> productSearchFood = [];
+  List<ProductModel> likedProduct = [];
   TextEditingController name = TextEditingController();
   TextEditingController description = TextEditingController();
   TextEditingController price = TextEditingController();
+  TextEditingController rating = TextEditingController();
 
   bool featured = false;
   File? productImage;
@@ -57,6 +59,12 @@ class ProductProvider with ChangeNotifier {
     productsByRestaurant.clear();
     productsByRestaurant =
         await _productServices.getProductsByRestaurant(id: restaurantId);
+    notifyListeners();
+  }
+
+  Future loadLikedProduct({required String id}) async {
+    likedProduct.clear();
+    likedProduct = await _productServices.getLikedProduct(id: id);
     notifyListeners();
   }
 
@@ -108,6 +116,27 @@ class ProductProvider with ChangeNotifier {
     return true;
   }
 
+  void likeOrDislikeProduct(
+      {String? userId, ProductModel? product, bool? liked}) async {
+    if (liked!) {
+      if (product!.userLikes.remove(userId)) {
+        _productServices.likeOrDislikeProduct(
+            id: product.id, userLikes: product.userLikes);
+      } else {
+        print("The user was not removed.");
+      }
+    } else {
+      product!.userLikes.add(userId!);
+      _productServices.likeOrDislikeProduct(
+          id: product.id, userLikes: product.userLikes);
+    }
+  }
+
+  void rateProduct({String? id, num? rating}) async {
+    _productServices.rateProduct(id: id, rating: rating);
+    notifyListeners();
+  }
+
   changeFeatured() {
     featured = !featured;
     notifyListeners();
@@ -137,5 +166,6 @@ class ProductProvider with ChangeNotifier {
     name.text = "";
     description.text = "";
     price.text = "";
+    rating.text = "";
   }
 }

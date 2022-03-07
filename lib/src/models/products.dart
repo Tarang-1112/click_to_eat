@@ -13,6 +13,7 @@ class ProductModel {
   final String category;
   final bool featured;
   final String description;
+  static const USER_LIKES = "userLikes";
 
   ProductModel({
     required this.id,
@@ -27,6 +28,10 @@ class ProductModel {
     required this.featured,
     required this.description,
   });
+
+  List<String> userLikes = [];
+
+  bool liked = true;
 
   factory ProductModel.fromSnapshot(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {

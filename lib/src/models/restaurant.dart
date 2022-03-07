@@ -10,6 +10,7 @@ class RestaurantModel {
   final num rates;
   final num rating;
   final bool popular;
+  static const USER_LIKES = "userLikes";
   //static const CREATED_AT = "createdAt";
 
   RestaurantModel({
@@ -22,6 +23,9 @@ class RestaurantModel {
     required this.rating,
     required this.popular,
   });
+
+  List<String> userLikes = [];
+  bool liked = true;
 
   // String _id = "";
   // String _description = "";

@@ -22,6 +22,19 @@ class RestaurantServices {
     return RestaurantModel.fromSnapshot(temp);
   }
 
+  Future<List<RestaurantModel>> getLikedRestaurant({String? id}) async =>
+      _firebaseFirestore
+          .collection(collection)
+          .where("userLikes", arrayContains: id)
+          .get()
+          .then((result) {
+        List<RestaurantModel> restaurants = [];
+        for (DocumentSnapshot<Map<String, dynamic>> restaurant in result.docs) {
+          restaurants.add(RestaurantModel.fromSnapshot(restaurant));
+        }
+        return restaurants;
+      });
+
   Future<List<RestaurantModel>> searchRestaurant({String? restaurantName}) {
     String searchKey =
         restaurantName![0].toUpperCase() + restaurantName.substring(1);
@@ -38,5 +51,12 @@ class RestaurantServices {
           }
           return searchedRestaurant;
         });
+  }
+
+  void likeOrDislikeProduct({String? id, List<String>? userLikes}) {
+    _firebaseFirestore
+        .collection(collection)
+        .doc(id)
+        .update({"userLikes": userLikes});
   }
 }

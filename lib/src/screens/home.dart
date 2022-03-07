@@ -7,6 +7,8 @@ import 'package:click_to_eat/src/providers/restaurant.dart';
 import 'package:click_to_eat/src/providers/user.dart';
 import 'package:click_to_eat/src/screens/cart.dart';
 import 'package:click_to_eat/src/screens/category.dart';
+import 'package:click_to_eat/src/screens/likedProduct.dart';
+import 'package:click_to_eat/src/screens/likedRestaurants.dart';
 import 'package:click_to_eat/src/screens/login.dart';
 import 'package:click_to_eat/src/screens/orders.dart';
 import 'package:click_to_eat/src/screens/product_search.dart';
@@ -120,7 +122,9 @@ class _HomeState extends State<Home> {
               ),
             ),
             ListTile(
-              onTap: () {},
+              onTap: () {
+                changeScreen(context, LikedProductScreen());
+              },
               leading: Icon(Icons.fastfood),
               title: CustomText(
                 text: "Food I like",
@@ -130,7 +134,9 @@ class _HomeState extends State<Home> {
               ),
             ),
             ListTile(
-              onTap: () {},
+              onTap: () {
+                changeScreen(context, LikedRestaurantsScreen());
+              },
               leading: Icon(Icons.restaurant),
               title: CustomText(
                 text: "Liked restaurants",
@@ -364,7 +370,7 @@ class _HomeState extends State<Home> {
         ),
       ),
       bottomNavigationBar: Container(
-        height: 73,
+        height: 75,
         color: white,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

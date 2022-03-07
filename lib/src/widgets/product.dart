@@ -3,6 +3,7 @@ import 'package:click_to_eat/src/helpers/style.dart';
 import 'package:click_to_eat/src/models/products.dart';
 import 'package:click_to_eat/src/providers/product.dart';
 import 'package:click_to_eat/src/providers/restaurant.dart';
+import 'package:click_to_eat/src/providers/user.dart';
 import 'package:click_to_eat/src/screens/restaurant.dart';
 import 'package:click_to_eat/src/widgets/loading.dart';
 import 'package:flutter/material.dart';
@@ -10,18 +11,24 @@ import 'package:click_to_eat/src/widgets/custom_text.dart';
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-class ProductWidget extends StatelessWidget {
+class ProductWidget extends StatefulWidget {
   final ProductModel productModel;
   const ProductWidget({Key? key, required this.productModel}) : super(key: key);
 
   @override
+  State<ProductWidget> createState() => _ProductWidgetState();
+}
+
+class _ProductWidgetState extends State<ProductWidget> {
+  @override
   Widget build(BuildContext context) {
     final restaurantProvider = Provider.of<RestaurantProvider>(context);
     final productProvider = Provider.of<ProductProvider>(context);
+    final user = Provider.of<UserProvider>(context);
     return Padding(
       padding: const EdgeInsets.only(left: 4, right: 4, top: 4, bottom: 10),
       child: Container(
-        height: 110,
+        height: 120,
         decoration: BoxDecoration(
             color: white,
             borderRadius: BorderRadius.circular(20),
@@ -53,7 +60,7 @@ class ProductWidget extends StatelessWidget {
                     ),
                     FadeInImage.memoryNetwork(
                       placeholder: kTransparentImage,
-                      image: productModel.image,
+                      image: widget.productModel.image,
                       height: 130,
                     ),
                   ],
@@ -69,7 +76,7 @@ class ProductWidget extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: CustomText(
-                          text: productModel.name,
+                          text: widget.productModel.name,
                           colors: black,
                           size: 16,
                           weight: FontWeight.w700,
@@ -88,11 +95,32 @@ class ProductWidget extends StatelessWidget {
                                     blurRadius: 4),
                               ]),
                           child: Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: Icon(
-                              Icons.favorite_border,
-                              color: red,
-                              size: 18,
+                            padding: const EdgeInsets.all(8.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  widget.productModel.liked =
+                                      !widget.productModel.liked;
+                                });
+                                productProvider.likeOrDislikeProduct(
+                                  userId: user.userModel!.id,
+                                  product: widget.productModel,
+                                  liked: widget.productModel.liked,
+                                );
+                                productProvider.loadLikedProduct(
+                                    id: user.userModel!.id);
+                              },
+                              child: !widget.productModel.liked
+                                  ? Icon(
+                                      Icons.favorite_sharp,
+                                      size: 20,
+                                      color: red,
+                                    )
+                                  : Icon(
+                                      Icons.favorite_border,
+                                      size: 20,
+                                      color: red,
+                                    ),
                             ),
                           ),
                         ),
@@ -113,14 +141,14 @@ class ProductWidget extends StatelessWidget {
                           size: 14,
                         ),
                         SizedBox(
-                          width: 10,
+                          width: 1,
                         ),
                         GestureDetector(
                           onTap: () async {
                             await productProvider.loadProductsByRestaurant(
-                                restaurantId: productModel.restaurantId);
+                                restaurantId: widget.productModel.restaurantId);
                             await restaurantProvider.loadSingleRestaurant(
-                                restaurantId: productModel.restaurantId);
+                                restaurantId: widget.productModel.restaurantId);
                             changeScreen(
                                 context,
                                 RestaurantScreen(
@@ -128,10 +156,10 @@ class ProductWidget extends StatelessWidget {
                                         restaurantProvider.restaurant));
                           },
                           child: CustomText(
-                            text: productModel.restaurantName,
+                            text: widget.productModel.restaurantName,
                             colors: primary,
                             weight: FontWeight.w500,
-                            size: 14,
+                            size: 11,
                           ),
                         ),
                       ],
@@ -145,7 +173,7 @@ class ProductWidget extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(left: 8.0),
                             child: CustomText(
-                              text: productModel.rating.toString(),
+                              text: widget.productModel.rating.toString(),
                               colors: grey,
                               size: 14.0,
                               weight: FontWeight.normal,
@@ -179,7 +207,7 @@ class ProductWidget extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(right: 8.0),
                         child: CustomText(
-                          text: "\u{20B9}${productModel.price}",
+                          text: "\u{20B9}${widget.productModel.price}",
                           colors: black,
                           size: 16,
                           weight: FontWeight.w500,

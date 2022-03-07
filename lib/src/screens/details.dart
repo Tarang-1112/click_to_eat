@@ -3,6 +3,7 @@ import 'package:click_to_eat/src/helpers/screen_navigation.dart';
 import 'package:click_to_eat/src/helpers/style.dart';
 import 'package:click_to_eat/src/models/products.dart';
 import 'package:click_to_eat/src/providers/app.dart';
+import 'package:click_to_eat/src/providers/product.dart';
 import 'package:click_to_eat/src/providers/user.dart';
 import 'package:click_to_eat/src/screens/cart.dart';
 import 'package:click_to_eat/src/widgets/bottom_navigation_icons.dart';
@@ -27,6 +28,7 @@ class _DetailsState extends State<Details> {
   Widget build(BuildContext context) {
     final app = Provider.of<AppProvider>(context);
     final user = Provider.of<UserProvider>(context);
+    final productProvider = Provider.of<ProductProvider>(context);
     return Scaffold(
       key: _key,
       appBar: AppBar(
@@ -190,6 +192,84 @@ class _DetailsState extends State<Details> {
                         }),
                   ),
                 ],
+              ),
+              GestureDetector(
+                onTap: () async {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Dialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          child: Container(
+                            height: 141,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: <Widget>[
+                                  Text(
+                                    "Rate the Product Out of 5!!",
+                                    textAlign: TextAlign.center,
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w600),
+                                  ),
+                                  SizedBox(
+                                    width: 320,
+                                    child: TextField(
+                                      controller: productProvider.rating,
+                                      keyboardType: TextInputType.number,
+                                      decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          hintText: "Enter your Rate",
+                                          hintStyle: TextStyle(
+                                              color: grey,
+                                              fontFamily: "Sen",
+                                              fontSize: 18)),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 320.0,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        productProvider.rateProduct(
+                                            id: widget.product.id,
+                                            rating: double.parse(
+                                                productProvider.rating.text));
+                                        //Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        "Submit",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        primary: Colors.red, // background
+                                        onPrimary: Colors.white, // foreground
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      });
+                },
+                child: Container(
+                  width: 200,
+                  decoration: BoxDecoration(
+                      color: Colors.deepPurple.shade700,
+                      borderRadius: BorderRadius.circular(20)),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(28, 12, 28, 12),
+                    child: CustomText(
+                      text: "Rate this Product!!",
+                      colors: white,
+                      size: 15,
+                      weight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               ),
 
               // Row(

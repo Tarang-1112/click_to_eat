@@ -82,7 +82,7 @@ class _FeaturedState extends State<Featured> {
     final productProvider = Provider.of<ProductProvider>(context);
     final user = Provider.of<UserProvider>(context);
     return Container(
-      height: 220,
+      height: 225,
       //width: 200,
       child: ListView.builder(
           scrollDirection: Axis.horizontal,
@@ -99,7 +99,7 @@ class _FeaturedState extends State<Featured> {
                       ));
                 },
                 child: Container(
-                  height: 320,
+                  height: 325,
                   width: 240,
                   decoration: BoxDecoration(
                     color: white,
@@ -157,33 +157,32 @@ class _FeaturedState extends State<Featured> {
                                 weight: FontWeight.normal),
                           ),
                           Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: white,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.shade300,
-                                    offset: Offset(1, 1),
-                                    blurRadius: 4,
-                                  ),
-                                ],
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: productProvider.products[index].featured
-                                    ? Icon(
-                                        Icons.favorite_sharp,
-                                        size: 20,
-                                        color: red,
-                                      )
-                                    : Icon(
-                                        Icons.favorite_border,
-                                        size: 20,
-                                        color: red,
-                                      ),
-                              ),
+                            padding: const EdgeInsets.all(8.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  productProvider.products[index].liked =
+                                      !productProvider.products[index].liked;
+                                });
+                                productProvider.likeOrDislikeProduct(
+                                  userId: user.userModel!.id,
+                                  product: productProvider.products[index],
+                                  liked: productProvider.products[index].liked,
+                                );
+                                productProvider.loadLikedProduct(
+                                    id: user.userModel!.id);
+                              },
+                              child: !productProvider.products[index].liked
+                                  ? Icon(
+                                      Icons.favorite_sharp,
+                                      size: 20,
+                                      color: red,
+                                    )
+                                  : Icon(
+                                      Icons.favorite_border,
+                                      size: 20,
+                                      color: red,
+                                    ),
                             ),
                           ),
                         ],
@@ -240,7 +239,7 @@ class _FeaturedState extends State<Featured> {
                             child: CustomText(
                                 text:
                                     "\u{20B9}${productProvider.products[index].price}",
-                                size: 16,
+                                size: 14,
                                 colors: black,
                                 weight: FontWeight.bold),
                           )
